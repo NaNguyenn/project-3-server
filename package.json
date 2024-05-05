@@ -1,0 +1,12 @@
+{
+  "name": "project-3-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "server": "json-server index.js --host 192.168.0.110 --port 3001"
+  },
+  "dependencies": {
+    "json-server": "0.17.4"
+  }
+}
