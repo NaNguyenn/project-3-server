@@ -1,5 +1,8 @@
 const express = require("express");
+const cors = require("cors");
+
 const app = express();
+app.use(cors());
 
 let data = {
   levels: [
@@ -188,7 +191,7 @@ app.get("/api/levels", (request, response) => {
 
 app.get("/api/categories", (request, response) => {
   const levelId = Number(request.query.levelId);
-  const categories = data.categories.find(
+  const categories = data.categories.filter(
     (category) => category.levelId === levelId
   );
 
@@ -201,7 +204,7 @@ app.get("/api/categories", (request, response) => {
 
 app.get("/api/words", (request, response) => {
   const categoryId = Number(request.query.categoryId);
-  const words = data.words.find((word) => word.categoryId === categoryId);
+  const words = data.words.filter((word) => word.categoryId === categoryId);
 
   if (words) {
     response.json(words);
