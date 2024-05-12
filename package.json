@@ -4,9 +4,16 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "server": "json-server index.js --host 192.168.0.110 --port 3001"
+    "json-server": "json-server db.js --host 192.168.0.110 --port 3001",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "express": "^4.19.2",
     "json-server": "0.17.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
