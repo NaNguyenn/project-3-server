@@ -40,7 +40,7 @@ app.post("/api/register", async (request, response) => {
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return response.status(400).json({ error: "Tên đăng nhập đã tồn tại" });
+      return response.status(400).json({ message: "Tên đăng nhập đã tồn tại" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -50,7 +50,7 @@ app.post("/api/register", async (request, response) => {
     });
     response.status(201).json({ message: "Tạo tài khoản thành công" });
   } catch (error) {
-    response.status(500).json({ error: "Lỗi hệ thống" });
+    response.status(500).json({ message: error.message });
   }
 });
 
@@ -61,7 +61,7 @@ app.post("/api/login", async (request, response) => {
     if (!existingUser) {
       return response
         .status(400)
-        .json({ error: "Tên đăng nhập hoặc mật khẩu không đúng" });
+        .json({ message: "Tên đăng nhập hoặc mật khẩu không đúng" });
     }
     const isPasswordMatched = await bcrypt.compare(
       password,
@@ -70,7 +70,7 @@ app.post("/api/login", async (request, response) => {
     if (!isPasswordMatched) {
       return response
         .status(400)
-        .json({ error: "Tên đăng nhập hoặc mật khẩu không đúng" });
+        .json({ message: "Tên đăng nhập hoặc mật khẩu không đúng" });
     }
 
     const token = jwt.sign(
@@ -79,7 +79,7 @@ app.post("/api/login", async (request, response) => {
     );
     response.status(200).json({ token });
   } catch (error) {
-    response.status(500).json({ error: "Lỗi hệ thống" });
+    response.status(500).json({ message: "Lỗi hệ thống" });
   }
 });
 
