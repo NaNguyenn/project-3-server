@@ -9,38 +9,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/levels", (request, response) => {
+app.get("/api/levels", (req, res) => {
   Level.find({})
     .then((levels) => {
-      response.json(levels);
+      res.json(levels);
     })
-    .catch(() => response.status(404).end());
+    .catch(() => res.status(404).end());
 });
 
-app.get("/api/categories", (request, response) => {
-  const levelId = request.query.levelId;
+app.get("/api/categories", (req, res) => {
+  const levelId = req.query.levelId;
   Level.findById(levelId)
     .then((level) => {
-      response.json(level.categories);
+      res.json(level.categories);
     })
-    .catch(() => response.status(404).end());
+    .catch(() => res.status(404).end());
 });
 
-app.get("/api/words", (request, response) => {
-  const categoryId = request.query.categoryId;
+app.get("/api/words", (req, res) => {
+  const categoryId = req.query.categoryId;
   Level.findOne({ "categories.id": categoryId })
     .then((level) => {
-      response.json(level.categories[0].words);
+      res.json(level.categories[0].words);
     })
-    .catch(() => response.status(404).end());
+    .catch(() => res.status(404).end());
 });
 
-app.post("/api/register", async (request, response) => {
-  const { username, password } = request.body;
+app.post("/api/register", async (req, res) => {
+  const { username, password } = req.body;
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return response.status(400).json({ message: "Tên đăng nhập đã tồn tại" });
+      return res.status(400).json({ message: "Tên đăng nhập đã tồn tại" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -48,18 +48,18 @@ app.post("/api/register", async (request, response) => {
       username,
       password: hashedPassword,
     });
-    response.status(201).json({ message: "Tạo tài khoản thành công" });
+    res.status(201).json({ message: "Tạo tài khoản thành công" });
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
-app.post("/api/login", async (request, response) => {
-  const { username, password } = request.body;
+app.post("/api/login", async (req, res) => {
+  const { username, password } = req.body;
   try {
     const existingUser = await User.findOne({ username });
     if (!existingUser) {
-      return response
+      return res
         .status(400)
         .json({ message: "Tên đăng nhập hoặc mật khẩu không đúng" });
     }
@@ -68,7 +68,7 @@ app.post("/api/login", async (request, response) => {
       existingUser.password
     );
     if (!isPasswordMatched) {
-      return response
+      return res
         .status(400)
         .json({ message: "Tên đăng nhập hoặc mật khẩu không đúng" });
     }
@@ -77,9 +77,9 @@ app.post("/api/login", async (request, response) => {
       { userId: existingUser.username },
       process.env.JWT_SECRET
     );
-    response.status(200).json({ token });
+    res.status(200).json({ token, user: { username: existingUser.username } });
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
