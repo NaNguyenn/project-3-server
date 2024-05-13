@@ -50,7 +50,7 @@ app.post("/api/register", async (request, response) => {
     });
     response.status(201).json({ message: "Tạo tài khoản thành công" });
   } catch (error) {
-    res.status(500).json({ error: "Lỗi hệ thống" });
+    response.status(500).json({ error: "Lỗi hệ thống" });
   }
 });
 
@@ -79,7 +79,7 @@ app.post("/api/login", async (request, response) => {
     );
     response.status(200).json({ token });
   } catch (error) {
-    res.status(500).json({ error: "Lỗi hệ thống" });
+    response.status(500).json({ error: "Lỗi hệ thống" });
   }
 });
 
