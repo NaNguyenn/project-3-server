@@ -33,7 +33,7 @@ app.get("/api/words", (request, response) => {
     .catch(() => response.status(404).end());
 });
 
-app.post("/register", async (request, response) => {
+app.post("/api/register", async (request, response) => {
   const { username, password } = request.body;
   try {
     const existingUser = await User.findOne({ username });
