@@ -46,6 +46,20 @@ const levelSchema = new mongoose.Schema({
   categories: [categorySchema],
 });
 
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+});
+
 levelSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
@@ -54,6 +68,15 @@ levelSchema.set("toJSON", {
   },
 });
 
-const Level = mongoose.model("Level", levelSchema);
+userSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
 
-module.exports = { Level };
+const Level = mongoose.model("Level", levelSchema);
+const User = mongoose.model("User", userSchema);
+
+module.exports = { Level, User };

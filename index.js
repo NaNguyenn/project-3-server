@@ -1,14 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { Level } = require("./models");
+const bcrypt = require("bcrypt");
+const { Level, User } = require("./models");
 
 const app = express();
 app.use(cors());
-
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
 
 app.get("/api/levels", (request, response) => {
   Level.find({})
@@ -34,6 +31,25 @@ app.get("/api/words", (request, response) => {
       response.json(level.categories[0].words);
     })
     .catch(() => response.status(404).end());
+});
+
+app.post("/register", async (request, response) => {
+  const { username, password } = request.body;
+  try {
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return response.status(400).json({ error: "Tên đăng nhập đã tồn tại" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.create({
+      username,
+      password: hashedPassword,
+    });
+    response.status(201).json({ message: "Tạo tài khoản thành công" });
+  } catch (error) {
+    res.status(500).json({ error: "Lỗi hệ thống" });
+  }
 });
 
 const PORT = process.env.PORT;
