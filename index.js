@@ -79,7 +79,7 @@ app.post("/api/login", async (request, response) => {
     );
     response.status(200).json({ token });
   } catch (error) {
-    response.status(500).json({ message: "Lỗi hệ thống" });
+    response.status(500).json({ message: error.message });
   }
 });
 
