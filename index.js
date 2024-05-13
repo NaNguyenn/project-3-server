@@ -6,6 +6,7 @@ const { Level, User } = require("./models");
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get("/api/levels", (request, response) => {
   Level.find({})
