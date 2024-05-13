@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { Level, User } = require("./models");
 
 const app = express();
@@ -48,6 +49,35 @@ app.post("/api/register", async (request, response) => {
       password: hashedPassword,
     });
     response.status(201).json({ message: "Tạo tài khoản thành công" });
+  } catch (error) {
+    res.status(500).json({ error: "Lỗi hệ thống" });
+  }
+});
+
+app.post("/api/login", async (request, response) => {
+  const { username, password } = request.body;
+  try {
+    const existingUser = await User.findOne({ username });
+    if (!existingUser) {
+      return response
+        .status(400)
+        .json({ error: "Tên đăng nhập hoặc mật khẩu không đúng" });
+    }
+    const isPasswordMatched = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
+    if (!isPasswordMatched) {
+      return response
+        .status(400)
+        .json({ error: "Tên đăng nhập hoặc mật khẩu không đúng" });
+    }
+
+    const token = jwt.sign(
+      { userId: existingUser.username },
+      process.env.JWT_SECRET
+    );
+    response.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ error: "Lỗi hệ thống" });
   }
