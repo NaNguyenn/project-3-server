@@ -28,7 +28,7 @@ app.get("/api/categories", (req, res) => {
 
 app.get("/api/words", (req, res) => {
   const categoryId = req.query.categoryId;
-  Level.findOne({ "categories.id": categoryId })
+  Level.findOne({ "categories._id": categoryId })
     .then((level) => {
       res.json(level.categories[0].words);
     })

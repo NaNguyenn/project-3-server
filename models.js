@@ -60,22 +60,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-levelSchema.set("toJSON", {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
-
-userSchema.set("toJSON", {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
-
 const Level = mongoose.model("Level", levelSchema);
 const User = mongoose.model("User", userSchema);
 
