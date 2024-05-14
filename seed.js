@@ -190,42 +190,6 @@ mongoose
 
     const initialLevels = await Level.insertMany(levels);
 
-    const transformedLevels = await Level.updateMany(
-      {},
-      [
-        {
-          $set: {
-            id: { $toString: "$_id" },
-            categories: {
-              $map: {
-                input: "$categories",
-                as: "category",
-                in: {
-                  id: { $toString: "$$category._id" },
-                  label: "$$category.label",
-                  words: {
-                    $map: {
-                      input: "$$category.words",
-                      as: "word",
-                      in: {
-                        id: { $toString: "$$word._id" },
-                        eng: "$$word.eng",
-                        vie: "$$word.vie",
-                        quiz: "$$word.quiz",
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        { $unset: "_id" },
-        { $unset: "__v" },
-      ],
-      { multi: true }
-    );
-
     console.log("Initial data inserted successfully");
     mongoose.connection.close();
   })

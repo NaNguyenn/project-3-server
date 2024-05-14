@@ -77,7 +77,10 @@ app.post("/api/login", async (req, res) => {
       { userId: existingUser.username },
       process.env.JWT_SECRET
     );
-    res.status(200).json({ token, user: { username: existingUser.username } });
+    res.status(200).json({
+      token,
+      user: { username: existingUser.username, _id: existingUser._id },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
