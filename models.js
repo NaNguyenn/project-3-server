@@ -46,6 +46,21 @@ const levelSchema = new mongoose.Schema({
   categories: [categorySchema],
 });
 
+const scoreSchema = new mongoose.Schema({
+  category: {
+    type: String,
+    required: true,
+  },
+  score: {
+    type: Number,
+    required: true,
+  },
+  total: {
+    type: Number,
+    required: true,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -58,6 +73,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  scores: [scoreSchema],
   isAdmin: { type: Boolean },
 });
 

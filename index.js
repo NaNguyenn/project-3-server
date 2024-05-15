@@ -34,7 +34,7 @@ app.get("/api/words", async (req, res) => {
     const level = await Level.findOne({ "categories._id": categoryId });
     if (level) {
       const category = level.categories.id(categoryId);
-      res.json(category.words);
+      res.json({ words: category.words, categoryLabel: category.label });
     } else {
       res.status(404).end();
     }
@@ -95,6 +95,7 @@ app.post("/api/register", async (req, res) => {
     await User.create({
       username,
       password: hashedPassword,
+      scores: [],
     });
     res.status(201).json({ message: "Tạo tài khoản thành công" });
   } catch (error) {
@@ -131,8 +132,35 @@ app.post("/api/login", async (req, res) => {
         username: existingUser.username,
         _id: existingUser._id,
         isAdmin: existingUser.isAdmin,
+        scores: existingUser.scores,
       },
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post("/api/user/score/add", async (req, res) => {
+  const { userId, categoryLabel, score, total } = req.body;
+  if (!userId || !categoryLabel || score == null || total == null) {
+    return res.status(400).json({ message: "Thiếu thông tin đầu vào" });
+  }
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+    const newScoreItem = {
+      category: categoryLabel,
+      score,
+      total,
+    };
+
+    user.scores.push(newScoreItem);
+
+    await user.save();
+
+    res.status(201).json({ message: "Cập nhật điểm thành công" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
