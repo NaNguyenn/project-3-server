@@ -58,6 +58,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  isAdmin: { type: Boolean },
 });
 
 const Level = mongoose.model("Level", levelSchema);
