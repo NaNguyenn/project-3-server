@@ -49,7 +49,7 @@ app.post("/api/words/add", async (req, res) => {
     }
 
     const isCategoryExisted = matchedLevel.categories.find(
-      (category) => category.label === categoryLabel
+      (category) => category.label.toLowerCase() === categoryLabel.toLowerCase()
     );
     if (isCategoryExisted) {
       return res
