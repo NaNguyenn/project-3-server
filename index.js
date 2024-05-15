@@ -9,30 +9,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/levels", (req, res) => {
-  Level.find({})
-    .then((levels) => {
-      res.json(levels);
-    })
-    .catch(() => res.status(404).end());
+app.get("/api/levels", async (req, res) => {
+  try {
+    const levels = await Level.find({});
+    res.json(levels);
+  } catch (error) {
+    res.status(404).end();
+  }
 });
 
-app.get("/api/categories", (req, res) => {
+app.get("/api/categories", async (req, res) => {
   const levelId = req.query.levelId;
-  Level.findById(levelId)
-    .then((level) => {
-      res.json(level.categories);
-    })
-    .catch(() => res.status(404).end());
+  try {
+    const level = await Level.findById(levelId);
+    res.json(level.categories);
+  } catch (error) {
+    res.status(404).end();
+  }
 });
 
-app.get("/api/words", (req, res) => {
+app.get("/api/words", async (req, res) => {
   const categoryId = req.query.categoryId;
-  Level.findOne({ "categories._id": categoryId })
-    .then((level) => {
-      res.json(level.categories[0].words);
-    })
-    .catch(() => res.status(404).end());
+  try {
+    const level = await Level.findOne({ "categories._id": categoryId });
+    if (level) {
+      const category = level.categories.id(categoryId);
+      res.json(category.words);
+    } else {
+      res.status(404).end();
+    }
+  } catch (error) {
+    res.status(404).end();
+  }
 });
 
 app.post("/api/words/add", async (req, res) => {
