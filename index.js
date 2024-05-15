@@ -178,13 +178,21 @@ app.post("/api/user/score/add", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Người dùng không tồn tại" });
     }
-    const newScoreItem = {
-      category: categoryLabel,
-      score,
-      total,
-    };
+    const existingScoreIndex = user.scores.findIndex(
+      (item) => item.category === categoryLabel
+    );
 
-    user.scores.push(newScoreItem);
+    if (existingScoreIndex !== -1) {
+      user.scores[existingScoreIndex].score = score;
+      user.scores[existingScoreIndex].total = total;
+    } else {
+      const newScoreItem = {
+        category: categoryLabel,
+        score,
+        total,
+      };
+      user.scores.push(newScoreItem);
+    }
 
     await user.save();
 
