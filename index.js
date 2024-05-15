@@ -35,20 +35,20 @@ app.get("/api/words", (req, res) => {
     .catch(() => res.status(404).end());
 });
 
-app.post("/api/words", async (req, res) => {
-  const { level, categoryLabel, words } = req.body;
+app.post("/api/words/add", async (req, res) => {
+  const { levelId, categoryLabel, words } = req.body;
 
-  if (level == null || categoryLabel == null || words == null) {
+  if (levelId == null || categoryLabel == null || words == null) {
     return res.status(400).json({ message: "Thiếu dữ liệu đầu vào" });
   }
 
   try {
-    const matchedLevel = await Level.findOne({ value: level });
+    const matchedLevel = await Level.findById(levelId);
     if (!matchedLevel) {
       return res.status(400).json({ message: "Không tìm thấy độ khó" });
     }
 
-    const isCategoryExisted = level.categories.find(
+    const isCategoryExisted = matchedLevel.categories.find(
       (category) => category.label === categoryLabel
     );
     if (isCategoryExisted) {
@@ -66,8 +66,8 @@ app.post("/api/words", async (req, res) => {
       })),
     };
 
-    level.categories.push(newCategory);
-    await level.save();
+    matchedLevel.categories.push(newCategory);
+    await matchedLevel.save();
 
     res.status(201).json({ message: "Tạo nhóm từ thành công" });
   } catch (error) {
