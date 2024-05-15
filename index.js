@@ -35,6 +35,46 @@ app.get("/api/words", (req, res) => {
     .catch(() => res.status(404).end());
 });
 
+app.post("/api/words", async (req, res) => {
+  const { level, categoryLabel, words } = req.body;
+
+  if (level == null || categoryLabel == null || words == null) {
+    return res.status(400).json({ message: "Thiếu dữ liệu đầu vào" });
+  }
+
+  try {
+    const matchedLevel = await Level.findOne({ value: level });
+    if (!matchedLevel) {
+      return res.status(400).json({ message: "Không tìm thấy độ khó" });
+    }
+
+    const isCategoryExisted = level.categories.find(
+      (category) => category.label === categoryLabel
+    );
+    if (isCategoryExisted) {
+      return res
+        .status(400)
+        .json({ message: `Chủ đề ${categoryLabel} đã tồn tại` });
+    }
+
+    const newCategory = {
+      label: categoryLabel,
+      words: words.map((word) => ({
+        eng: word.eng,
+        vie: word.vie,
+        quiz: word.quiz,
+      })),
+    };
+
+    level.categories.push(newCategory);
+    await level.save();
+
+    res.status(201).json({ message: "Tạo nhóm từ thành công" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
   try {
